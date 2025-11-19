@@ -1,0 +1,98 @@
+---
+title: "Data211ProjectFinal"
+author: "Lykyteng Lysongtseng"
+date: "2025-11-12"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Daily Water Intake Project Final
+Hypothesis 1.
+$H_o:$  amount of daily water intake equal to 3000 ml
+$H_A:$  amount of daily water intake is not equal to 3000 ml
+Hypothesis 2.
+$mu_o:$  mean amount of water intake of workout day is equal to mean amount of water intake           on non-workout day.
+$mu_A:$  mean amount of water intake of workout day is not equal to mean amount of water              intake on non-workout day. 
+
+
+
+```{r}
+library(readxl)
+Daily_water_intake<-read_xlsx("C:/Users/lykyt/OneDrive/Daily water intake.xlsx")
+```
+```{r}
+mean(Daily_water_intake$water_intake)
+```
+
+```{r}
+library(ggplot2)
+
+```
+
+```{r}
+ggplot(data = Daily_water_intake,aes(x=Day,y=water_intake))+
+  geom_line(color="red", size=0.05, lineype="dotdash")+
+  labs(x="Time",y="Pesonal Saving Rate")
+```
+# Histogram
+```{r}
+ggplot(data = Daily_water_intake, aes(x = Day, y = water_intake, fill = workout)) +
+  geom_col(width = 0.6) +
+  labs(title = "Water Intake Over 14 Days",
+       x = "Day",
+       y = "Water Intake (Liters)") +
+  scale_fill_manual(values = c("Yes" = "steelblue", "No" = "yellow")) +
+  theme_minimal()
+    
+```
+
+```{r}
+ggplot(data = Daily_water_intake, aes(x = Day, y = water_intake, fill = workout)) +
+  geom_col(width = 0.6) +
+  labs(title = "Water Intake Over 14 Days",
+       x = "Day",
+       y = "Water Intake (Liters)") +
+  scale_fill_manual(values = c("Yes" = "steelblue", "No" = "yellow")) +
+  theme_minimal()
+```
+
+# Data Wrangling
+```{r}
+workout_data <- subset(Daily_water_intake, workout == "Yes")
+nonworkout_data <- subset(Daily_water_intake, workout == "No")
+```
+
+```{r}
+mean(workout_data$water_intake, na.rm = TRUE)
+mean(nonworkout_data$water_intake, na.rm = TRUE)
+```
+```{r}
+library(dplyr)
+
+Daily_water_intake %>%
+  group_by(workout) %>%
+  summarise(mean_intake = mean(water_intake, na.rm = TRUE))
+
+```
+```{r}
+table(Daily_water_intake$workout)
+```
+
+```{r}
+t.test(Daily_water_intake$water_intake, mu = 3, alternative = "two.sided")
+```
+$p-value\approx 0<\alpha=0.05$ So we reject $H_0$.At $5\%$ significance level we have sufficient evidence to conclude mean water intake is significantly lower than recommended 3000 mL.  
+
+```{r}
+Daily_water_intake$workout<-factor(Daily_water_intake$workout, levels = c("No","Yes"))
+t.test(water_intake ~ workout, data = Daily_water_intake, alternative = "two.sided")
+```
+
+$p-value\approx 0<\alpha=0.05$ So we reject $H_0$.At $5\%$ significance level we have sufficient evidence to conclude daily water intake is dependent on my workout days. The level of water intake on workout days are significantly different versus the water intake on non-workout days.  I also found that the mean of water intake working out was closer to the daily water intake. More study would have to be done in terms of the length and types of workouts, height and weight, and other factors that could have contributed to water intake.
+
+
